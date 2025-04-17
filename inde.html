@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Книга рецептів</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #45a049;
+            --text-color: #333;
+            --bg-color: #f9f9f9;
+            --card-bg: #fff;
+            --border-color: #ddd;
+            --dish-bg: #e9e9e9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 10px;
+        }
+
+        /* Шапка */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 60%;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-color);
+            padding: 5px;
+        }
+
+        /* Основной контент */
+        .main-content {
+            margin-top: 15px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        /* Категории */
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .category-item {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-name {
+            font-weight: 500;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 80%;
+        }
+
+        .category-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-icon {
+            font-size: 1rem;
+            cursor: pointer;
+            color: #666;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .action-icon:hover {
+            color: var(--primary-color);
+        }
+
+        /* Блюда */
+        .dishes-list {
+            margin-top: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dish-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background-color: var(--dish-bg);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dish-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 70%;
+        }
+
+        .add-dish-btn {
+            background-color: #ddd;
+            color: #333;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .add-dish-btn:hover {
+            background-color: #ccc;
+        }
+
+        /* Формы */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            width: 95%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Поиск */
+        .search-container {
+            display: none;
+            padding: 10px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .search-results {
+            margin-top: 15px;
+        }
+
+        .search-result-item {
+            background-color: var(--card-bg);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        /* Рецепт */
+        .recipe-container {
+            display: none;
+            margin-top: 15px;
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .recipe-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .ingredient-list {
+            margin-top: 15px;
+        }
+
+        .ingredient-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Ингредиенты */
+        #ingredient-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+
+        #ingredient-tags span {
+            display: inline-block;
+            background-color: #e0e0e0;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        #ingredient-tags span:hover {
+            background-color: #c0c0c0;
+        }
+
+        #ingredient-tags span.selected {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .btn {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .category-name {
+                max-width: 70%;
+            }
+            
+            .dish-name {
+                max-width: 60%;
+            }
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        /* Скрытие элементов */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <h1>Книга рецептів</h1>
+        <div class="header-actions">
+            <button id="search-btn" class="btn-icon"><i class="fas fa-search"></i></button>
+            <button id="add-category-btn" class="btn-icon"><i class="fas fa-plus"></i></button>
+            <button id="auth-btn" class="btn-icon"><i class="fas fa-user"></i></button>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <div class="container">
+        <main class="main-content">
+            <!-- Поиск -->
+            <div id="search-container" class="search-container hidden">
+                <button onclick="hideSearch()" class="btn">Назад</button>
+                <h3>Інгридієнти:</h3>
+                <div id="ingredient-tags"></div>
+                <div class="recipes-section">
+                    <h3>Страви з вибраними інгредієнтами:</h3>
+                    <div id="search-results" class="search-results"></div>
+                </div>
+            </div>
+            
+            <div id="categories-content">
+                <h2 class="section-title">Мої категорії</h2>
+                <div id="categories" class="category-list">
+                    <!-- Категории будут здесь -->
+                </div>
+            </div>
+            
+            <!-- Рецепт -->
+            <div id="recipe-container" class="recipe-container hidden">
+                <h3 id="recipe-title" class="recipe-title"></h3>
+                <div class="form-group">
+                    <input type="text" id="ingredient-name" class="form-input" placeholder="Інгредієнт">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="ingredient-quantity" class="form-input" placeholder="Кількість">
+                </div>
+                <div class="form-group">
+                    <textarea id="ingredient-description" class="form-input" placeholder="Опис" rows="3"></textarea>
+                </div>
+                <button id="add-ingredient-btn" class="btn">Додати інгредієнт</button>
+                
+                <div id="ingredient-list" class="ingredient-list">
+                    <!-- Ингредиенты будут здесь -->
+                </div>
+                
+                <button id="back-to-categories-btn" class="btn" style="margin-top: 15px;">Назад до категорій</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Модальные окна -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content fade-in">
+            <div class="modal-header">
+                <h3 class="modal-title">Увійти</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="auth-form">
+                <div class="form-group">
+                    <input type="email" id="auth-email" class="form-input" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="auth-password" class="form-input" placeholder="Пароль" required>
+                </div>
+                <button type="submit" class="btn" id="login-btn">Увійти</button>
+                <button type="button" class="btn" id="register-btn">Зареєструватися</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit-category-modal" class="modal">
+        <div class="modal-content fade-in">
+            <div class="modal-header">
+                <h3 class="modal-title">Редагувати категорію</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="edit-category-name" class="form-input" placeholder="Назва категорії">
+            </div>
+            <button id="save-edit-category-btn" class="btn">Зберегти</button>
+        </div>
+    </div>
+
+    <div id="edit-dish-modal" class="modal">
+        <div class="modal-content fade-in">
+            <div class="modal-header">
+                <h3 class="modal-title">Редагувати страву</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="edit-dish-name" class="form-input" placeholder="Назва страви">
+            </div>
+            <button id="save-edit-dish-btn" class="btn">Зберегти</button>
+        </div>
+    </div>
+
+    <div id="add-category-modal" class="modal">
+        <div class="modal-content fade-in">
+            <div class="modal-header">
+                <h3 class="modal-title">Додати категорію</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="category-name" class="form-input" placeholder="Назва категорії">
+            </div>
+            <button id="save-category-btn" class="btn">Зберегти</button>
+        </div>
+    </div>
+
+    <div id="add-dish-modal" class="modal">
+        <div class="modal-content fade-in">
+            <div class="modal-header">
+                <h3 class="modal-title">Додати страву</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="dish-name" class="form-input" placeholder="Назва страви">
+            </div>
+            <button id="save-dish-btn" class="btn">Зберегти</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { getDatabase, ref, set, onValue, push, child, update, remove } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+      
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsi129Y9ltNjMbNPU8D9s1JURMxVyeHYs",
+            authDomain: "notebook-66f4e.firebaseapp.com",
+            databaseURL: "https://notebook-66f4e-default-rtdb.firebaseio.com",
+            projectId: "notebook-66f4e",
+            storageBucket: "notebook-66f4e.appspot.com",
+            messagingSenderId: "413116753375",
+            appId: "1:413116753375:web:f219f9737873f83005906a",
+            measurementId: "G-X5CTLR08TR"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+      
+        // DOM элементы
+        const authModal = document.getElementById('auth-modal');
+        const addCategoryModal = document.getElementById('add-category-modal');
+        const addDishModal = document.getElementById('add-dish-modal');
+        const editCategoryModal = document.getElementById('edit-category-modal');
+        const editDishModal = document.getElementById('edit-dish-modal');
+        const searchContainer = document.getElementById('search-container');
+        const categoriesContainer = document.getElementById('categories');
+        const categoriesContent = document.getElementById('categories-content');
+        const recipeContainer = document.getElementById('recipe-container');
+        const recipeTitle = document.getElementById('recipe-title');
+        const ingredientList = document.getElementById('ingredient-list');
+        const ingredientTags = document.getElementById('ingredient-tags');
+        const searchResults = document.getElementById('search-results');
+      
+        let currentUser = null;
+        let categories = [];
+        let recipes = [];
+        let currentDish = null;
+        let selectedIngredients = [];
+        let editingCategoryIndex = null;
+        let editingDishIndex = null;
+        let editingDishCategoryIndex = null;
+        let currentCategoryIndex = null;
+      
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth();
+            setupEventListeners();
+        });
+      
+        // Настройка слушателей событий
+        function setupEventListeners() {
+            // Кнопки в шапке
+            document.getElementById('auth-btn').addEventListener('click', () => {
+                if (currentUser) {
+                    signOut(auth);
+                } else {
+                    authModal.style.display = 'flex';
+                }
+            });
+      
+            document.getElementById('search-btn').addEventListener('click', toggleSearch);
+      
+            document.getElementById('add-category-btn').addEventListener('click', () => {
+                if (currentUser) {
+                    addCategoryModal.style.display = 'flex';
+                } else {
+                    alert('Будь ласка, увійдіть в систему');
+                    authModal.style.display = 'flex';
+                }
+            });
+      
+            // Закрытие модальных окон
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    authModal.style.display = 'none';
+                    addCategoryModal.style.display = 'none';
+                    addDishModal.style.display = 'none';
+                    editCategoryModal.style.display = 'none';
+                    editDishModal.style.display = 'none';
+                });
+            });
+      
+            // Сохранение категории
+            document.getElementById('save-category-btn').addEventListener('click', addCategory);
+      
+            // Сохранение блюда
+            document.getElementById('save-dish-btn').addEventListener('click', addDish);
+      
+            // Редактирование категории
+            document.getElementById('save-edit-category-btn').addEventListener('click', saveEditedCategory);
+      
+            // Редактирование блюда
+            document.getElementById('save-edit-dish-btn').addEventListener('click', saveEditedDish);
+      
+            // Добавление ингредиента
+            document.getElementById('add-ingredient-btn').addEventListener('click', addIngredient);
+            
+            // Возврат к категориям
+            document.getElementById('back-to-categories-btn').addEventListener('click', () => {
+                recipeContainer.classList.add('hidden');
+                categoriesContent.classList.remove('hidden');
+            });
+        }
+      
+        // Переключение поиска
+        function toggleSearch() {
+            searchContainer.classList.toggle('hidden');
+            categoriesContent.classList.toggle('hidden');
+            recipeContainer.classList.add('hidden');
+            
+            if (!searchContainer.classList.contains('hidden')) {
+                renderPopularIngredients();
+            }
+        }
+      
+        function hideSearch() {
+            searchContainer.classList.add('hidden');
+            categoriesContent.classList.remove('hidden');
+            selectedIngredients = [];
+            Array.from(ingredientTags.children).forEach(tag => {
+                tag.classList.remove('selected');
+            });
+        }
+      
+        // Работа с Firebase Auth
+        function initAuth() {
+            // Слушаем изменения состояния аутентификации
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    authModal.style.display = 'none';
+                    document.getElementById('auth-btn').innerHTML = '<i class="fas fa-sign-out-alt"></i>';
+                    
+                    // Загружаем данные пользователя
+                    loadUserData(user.uid);
+                } else {
+                    currentUser = null;
+                    document.getElementById('auth-btn').innerHTML = '<i class="fas fa-user"></i>';
+                    // Очищаем данные при выходе
+                    categories = [];
+                    recipes = [];
+                    renderCategories();
+                }
+            });
+      
+            // Логин по email/паролю
+            document.getElementById('auth-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('auth-email').value;
+                const password = document.getElementById('auth-password').value;
+      
+                signInWithEmailAndPassword(auth, email, password)
+                    .catch(error => alert(error.message));
+            });
+      
+            // Регистрация
+            document.getElementById('register-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('auth-email').value;
+                const password = document.getElementById('auth-password').value;
+      
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        alert('Реєстрація успішна!');
+                        // Создаем начальную структуру данных для нового пользователя
+                        const userId = userCredential.user.uid;
+                        set(ref(database, `users/${userId}`), {
+                            categories: [],
+                            recipes: []
+                        });
+                    })
+                    .catch(error => alert(error.message));
+            });
+        }
+      
+        // Загрузка данных пользователя
+        function loadUserData(userId) {
+            // Загружаем категории
+            const categoriesRef = ref(database, `users/${userId}/categories`);
+            onValue(categoriesRef, (snapshot) => {
+                categories = [];
+                snapshot.forEach((childSnapshot) => {
+                    categories.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+                renderCategories();
+            });
+            
+            // Загружаем рецепты
+            const recipesRef = ref(database, `users/${userId}/recipes`);
+            onValue(recipesRef, (snapshot) => {
+                recipes = [];
+                snapshot.forEach((childSnapshot) => {
+                    recipes.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+                
+                // Если открыт рецепт, обновляем его ингредиенты
+                if (currentDish) {
+                    loadRecipeIngredients();
+                }
+                
+                // Обновляем список ингредиентов для поиска
+                renderPopularIngredients();
+            });
+        }
+      
+        // Отображение категорий
+        function renderCategories() {
+            categoriesContainer.innerHTML = '';
+      
+            if (categories.length === 0) {
+                categoriesContainer.innerHTML = '<p>У вас ще немає категорій</p>';
+                return;
+            }
+      
+            categories.forEach((category, index) => {
+                const categoryElement = document.createElement('div');
+                categoryElement.className = 'category-item';
+                categoryElement.innerHTML = `
+                    <div class="category-header" onclick="toggleDishes(${index})">
+                        <h3 class="category-name">${category.name}</h3>
+                        <div class="category-actions">
+                            <i class="fas fa-edit action-icon" onclick="event.stopPropagation(); showEditCategoryModal(${index})"></i>
+                            <i class="fas fa-trash action-icon" onclick="event.stopPropagation(); deleteCategory(${index})"></i>
+                        </div>
+                    </div>
+                    <div class="dishes-list" id="dishes-${index}">
+                        ${category.dishes && category.dishes.length > 0 ? 
+                            category.dishes.map((dish, dishIndex) => `
+                                <div class="dish-item" onclick="openRecipe('${dish}')">
+                                    <span class="dish-name">${dish}</span>
+                                    <div>
+                                        <i class="fas fa-edit action-icon" onclick="event.stopPropagation(); showEditDishModal(${index}, ${dishIndex})"></i>
+                                        <i class="fas fa-trash action-icon" onclick="event.stopPropagation(); deleteDish(${index}, ${dishIndex})"></i>
+                                    </div>
+                                </div>
+                            `).join('') : 
+                            '<p>Немає страв у цій категорії</p>'
+                        }
+                        <button class="add-dish-btn" onclick="event.stopPropagation(); showAddDishModal(${index})">Додати страву</button>
+                    </div>
+                `;
+                categoriesContainer.appendChild(categoryElement);
+            });
+        }
+      
+        // Добавление категории
+        function addCategory() {
+            const name = document.getElementById('category-name').value.trim();
+            if (!name) return alert('Введіть назву категорії');
+      
+            if (!currentUser) return;
+            
+            const newCategoryRef = push(ref(database, `users/${currentUser.uid}/categories`));
+            set(newCategoryRef, {
+                name: name,
+                dishes: []
+            }).then(() => {
+                addCategoryModal.style.display = 'none';
+                document.getElementById('category-name').value = '';
+            }).catch(error => {
+                alert('Помилка при додаванні категорії: ' + error.message);
+            });
+        }
+      
+        // Показать модальное окно редактирования категории
+        function showEditCategoryModal(index) {
+            editingCategoryIndex = index;
+            document.getElementById('edit-category-name').value = categories[index].name;
+            editCategoryModal.style.display = 'flex';
+        }
+      
+        // Сохранить отредактированную категорию
+        function saveEditedCategory() {
+            const newName = document.getElementById('edit-category-name').value.trim();
+            if (!newName) return alert('Введіть назву категорії');
+            
+            if (!currentUser || editingCategoryIndex === null) return;
+            
+            const categoryId = categories[editingCategoryIndex].id;
+            const categoryRef = ref(database, `users/${currentUser.uid}/categories/${categoryId}`);
+            
+            update(categoryRef, {
+                name: newName
+            }).then(() => {
+                editCategoryModal.style.display = 'none';
+            }).catch(error => {
+                alert('Помилка при збереженні категорії: ' + error.message);
+            });
+        }
+      
+        // Удаление категории
+        function deleteCategory(index) {
+            if (!confirm('Ви дійсно бажаєте видалити цю категорію?')) return;
+            
+            if (!currentUser) return;
+            
+            const categoryId = categories[index].id;
+            const categoryRef = ref(database, `users/${currentUser.uid}/categories/${categoryId}`);
+            
+            remove(categoryRef)
+                .catch(error => {
+                    alert('Помилка при видаленні категорії: ' + error.message);
+                });
+        }
+      
+        // Показать/скрыть блюда категории
+        function toggleDishes(index) {
+            const dishesContainer = document.getElementById(`dishes-${index}`);
+            dishesContainer.style.display = dishesContainer.style.display === 'none' ? 'flex' : 'none';
+        }
+      
+        // Показать модальное окно добавления блюда
+        function showAddDishModal(categoryIndex) {
+            currentCategoryIndex = categoryIndex;
+            document.getElementById('dish-name').value = '';
+            addDishModal.style.display = 'flex';
+        }
+      
+        // Добавление блюда
+        function addDish() {
+            const name = document.getElementById('dish-name').value.trim();
+            if (!name) return alert('Введіть назву страви');
+            
+            if (!currentUser || currentCategoryIndex === null) return;
+            
+            const categoryId = categories[currentCategoryIndex].id;
+            const categoryRef = ref(database, `users/${currentUser.uid}/categories/${categoryId}`);
+            
+            // Добавляем блюдо в категорию
+            const updatedDishes = [...(categories[currentCategoryIndex].dishes || []), name];
+            
+            update(categoryRef, {
+                dishes: updatedDishes
+            }).then(() => {
+                // Создаем новый рецепт
+                const newRecipeRef = push(ref(database, `users/${currentUser.uid}/recipes`));
+                return set(newRecipeRef, {
+                    name: name,
+                    ingredients: []
+                });
+            }).then(() => {
+                addDishModal.style.display = 'none';
+            }).catch(error => {
+                alert('Помилка при додаванні страви: ' + error.message);
+            });
+        }
+      
+        // Показать модальное окно редактирования блюда
+        function showEditDishModal(categoryIndex, dishIndex) {
+            editingDishCategoryIndex = categoryIndex;
+            editingDishIndex = dishIndex;
+            document.getElementById('edit-dish-name').value = categories[categoryIndex].dishes[dishIndex];
+            editDishModal.style.display = 'flex';
+        }
+      
+        // Сохранить отредактированное блюдо
+        function saveEditedDish() {
+            const oldName = categories[editingDishCategoryIndex].dishes[editingDishIndex];
+            const newName = document.getElementById('edit-dish-name').value.trim();
+            if (!newName) return alert('Введіть назву страви');
+            
+            if (!currentUser || editingDishCategoryIndex === null || editingDishIndex === null) return;
+            
+            const categoryId = categories[editingDishCategoryIndex].id;
+            const categoryRef = ref(database, `users/${currentUser.uid}/categories/${categoryId}`);
+            
+            // Обновляем имя в категории
+            const updatedDishes = [...categories[editingDishCategoryIndex].dishes];
+            updatedDishes[editingDishIndex] = newName;
+            
+            update(categoryRef, {
+                dishes: updatedDishes
+            }).then(() => {
+                // Обновляем имя в рецептах
+                const recipe = recipes.find(r => r.name === oldName);
+                if (recipe) {
+                    const recipeRef = ref(database, `users/${currentUser.uid}/recipes/${recipe.id}`);
+                    return update(recipeRef, {
+                        name: newName
+                    });
+                }
+            }).then(() => {
+                editDishModal.style.display = 'none';
+            }).catch(error => {
+                alert('Помилка при збереженні страви: ' + error.message);
+            });
+        }
+      
+        // Удаление блюда
+        function deleteDish(categoryIndex, dishIndex) {
+            if (!confirm('Ви дійсно бажаєте видалити це блюдо?')) return;
+            
+            if (!currentUser) return;
+            
+            const dishName = categories[categoryIndex].dishes[dishIndex];
+            const categoryId = categories[categoryIndex].id;
+            const categoryRef = ref(database, `users/${currentUser.uid}/categories/${categoryId}`);
+            
+            // Удаляем из категории
+            const updatedDishes = [...categories[categoryIndex].dishes];
+            updatedDishes.splice(dishIndex, 1);
+            
+            update(categoryRef, {
+                dishes: updatedDishes
+            }).then(() => {
+                // Удаляем рецепт
+                const recipe = recipes.find(r => r.name === dishName);
+                if (recipe) {
+                    const recipeRef = ref(database, `users/${currentUser.uid}/recipes/${recipe.id}`);
+                    return remove(recipeRef);
+                }
+            }).catch(error => {
+                alert('Помилка при видаленні страви: ' + error.message);
+            });
+        }
+      
+        // Открытие рецепта
+        function openRecipe(dishName) {
+            currentDish = dishName;
+            recipeTitle.textContent = dishName;
+            categoriesContent.classList.add('hidden');
+            recipeContainer.classList.remove('hidden');
+            loadRecipeIngredients();
+        }
+      
+        // Загрузка ингредиентов рецепта
+        function loadRecipeIngredients() {
+            const currentRecipe = recipes.find(recipe => recipe.name === currentDish);
+            
+            if (currentRecipe && currentRecipe.ingredients) {
+                ingredientList.innerHTML = currentRecipe.ingredients
+                    .map((ingredient, index) => `
+                        <div class="ingredient-item">
+                            <span>${ingredient.name}: ${ingredient.quantity} ${ingredient.description ? `(${ingredient.description})` : ''}</span>
+                            <div>
+                                <i class="fas fa-edit action-icon" onclick="editIngredient(${index})"></i>
+                                <i class="fas fa-trash action-icon" onclick="deleteIngredient(${index})"></i>
+                            </div>
+                        </div>
+                    `)
+                    .join('');
+            } else {
+                ingredientList.innerHTML = '<p>Ще немає інгредієнтів для цього рецепту</p>';
+            }
+        }
+      
+        // Добавление ингредиента
+        function addIngredient() {
+            const name = document.getElementById('ingredient-name').value.trim();
+            const quantity = document.getElementById('ingredient-quantity').value.trim();
+            const description = document.getElementById('ingredient-description').value.trim();
+      
+            if (!name || !quantity) return alert('Заповніть усі обов\'язкові поля!');
+            
+            if (!currentUser || !currentDish) return;
+            
+            // Находим рецепт
+            const recipe = recipes.find(r => r.name === currentDish);
+            if (!recipe) return;
+            
+            // Обновляем ингредиенты
+            const updatedIngredients = [...(recipe.ingredients || []), { name, quantity, description }];
+            const recipeRef = ref(database, `users/${currentUser.uid}/recipes/${recipe.id}`);
+            
+            update(recipeRef, {
+                ingredients: updatedIngredients
+            }).then(() => {
+                // Очищаем поля
+                document.getElementById('ingredient-name').value = '';
+                document.getElementById('ingredient-quantity').value = '';
+                document.getElementById('ingredient-description').value = '';
+                
+                // Добавляем ингредиент в поиск
+                addPopularIngredient(name);
+            }).catch(error => {
+                alert('Помилка при додаванні інгредієнта: ' + error.message);
+            });
+        }
+      
+        // Редактирование ингредиента
+        function editIngredient(index) {
+            const currentRecipe = recipes.find(recipe => recipe.name === currentDish);
+            if (!currentRecipe || !currentRecipe.ingredients) return;
+            
+            const ingredient = currentRecipe.ingredients[index];
+            const newName = prompt('Введіть нову назву інгредієнта:', ingredient.name);
+            const newQuantity = prompt('Введіть нову кількість інгредієнта:', ingredient.quantity);
+            const newDescription = prompt('Введіть новий опис інгредієнта:', ingredient.description);
+      
+            if (newName && newQuantity) {
+                if (!currentUser) return;
+                
+                const updatedIngredients = [...currentRecipe.ingredients];
+                updatedIngredients[index] = { 
+                    name: newName, 
+                    quantity: newQuantity, 
+                    description: newDescription 
+                };
+                
+                const recipeRef = ref(database, `users/${currentUser.uid}/recipes/${currentRecipe.id}`);
+                update(recipeRef, {
+                    ingredients: updatedIngredients
+                }).catch(error => {
+                    alert('Помилка при збереженні інгредієнта: ' + error.message);
+                });
+            }
+        }
+      
+        // Удаление ингредиента
+        function deleteIngredient(index) {
+            if (!confirm('Ви дійсно хочете, щоб видалити цей інгредієнт?')) return;
+            
+            const currentRecipe = recipes.find(recipe => recipe.name === currentDish);
+            if (!currentRecipe || !currentRecipe.ingredients) return;
+            
+            if (!currentUser) return;
+            
+            const updatedIngredients = [...currentRecipe.ingredients];
+            updatedIngredients.splice(index, 1);
+            
+            const recipeRef = ref(database, `users/${currentUser.uid}/recipes/${currentRecipe.id}`);
+            update(recipeRef, {
+                ingredients: updatedIngredients
+            }).catch(error => {
+                alert('Помилка при видаленні інгредієнта: ' + error.message);
+            });
+        }
+      
+        // Добавление популярного ингредиента
+        function addPopularIngredient(ingredient) {
+            const normalizedIngredient = normalizeIngredient(ingredient);
+            
+            // Проверка на наличие ингредиента в списке
+            const existingIngredient = Array.from(ingredientTags.children).find(
+                tag => normalizeIngredient(tag.textContent) === normalizedIngredient
+            );
+      
+            if (existingIngredient) return;
+      
+            const ingredientElement = document.createElement('span');
+            ingredientElement.textContent = ingredient;
+            ingredientElement.onclick = () => toggleIngredientSelection(ingredientElement, ingredient);
+            ingredientTags.appendChild(ingredientElement);
+        }
+      
+        // Рендер популярных ингредиентов
+        function renderPopularIngredients() {
+            ingredientTags.innerHTML = '';
+            
+            // Собираем все уникальные ингредиенты из всех рецептов
+            const allIngredients = new Set();
+            recipes.forEach(recipe => {
+                if (recipe.ingredients) {
+                    recipe.ingredients.forEach(ingredient => {
+                        allIngredients.add(ingredient.name);
+                    });
+                }
+            });
+            
+            // Добавляем их в список
+            allIngredients.forEach(ingredient => {
+                addPopularIngredient(ingredient);
+            });
+        }
+      
+        // Нормализация ингредиентов
+        function normalizeIngredient(ingredient) {
+            return ingredient.toLowerCase().trim();
+        }
+      
+        // Выбор/отмена выбора ингредиента
+        function toggleIngredientSelection(element, ingredient) {
+            const index = selectedIngredients.indexOf(ingredient);
+            if (index > -1) {
+                selectedIngredients.splice(index, 1);
+                element.classList.remove('selected');
+            } else {
+                selectedIngredients.push(ingredient);
+                element.classList.add('selected');
+            }
+            searchRecipes();
+        }
+      
+        // Поиск рецептов
+        function searchRecipes() {
+            if (selectedIngredients.length === 0) {
+                searchResults.innerHTML = '<p>Оберіть інгредієнти для пошуку</p>';
+                return;
+            }
+            
+            const normalizedIngredients = selectedIngredients.map(normalizeIngredient);
+            const results = recipes.filter(recipe => {
+                if (!recipe.ingredients) return false;
+                
+                return normalizedIngredients.every(ingredient =>
+                    recipe.ingredients.some(({ name }) => 
+                        normalizeIngredient(name).includes(ingredient))
+                );
+            });
+      
+            renderSearchResults(results);
+        }
+      
+        // Отображение результатов поиска
+        function renderSearchResults(results) {
+            searchResults.innerHTML = results.length
+                ? results.map(recipe => `
+                    <div class="search-result-item" onclick="openRecipeFromSearch('${recipe.name}')">
+                        <h4>${recipe.name}</h4>
+                        <p>Інгредієнти: ${recipe.ingredients.map(i => i.name).join(', ')}</p>
+                    </div>
+                `).join('')
+                : '<p>Рецепти не знайдені</p>';
+        }
+      
+        // Открытие рецепта из поиска
+        function openRecipeFromSearch(dishName) {
+            currentDish = dishName;
+            recipeTitle.textContent = dishName;
+            searchContainer.classList.add('hidden');
+            recipeContainer.classList.remove('hidden');
+            loadRecipeIngredients();
+        }
+      
+        // Делаем функции доступными глобально для обработчиков событий в HTML
+        window.toggleDishes = toggleDishes;
+        window.showAddDishModal = showAddDishModal;
+        window.openRecipe = openRecipe;
+        window.showEditCategoryModal = showEditCategoryModal;
+        window.showEditDishModal = showEditDishModal;
+        window.deleteCategory = deleteCategory;
+        window.deleteDish = deleteDish;
+        window.editIngredient = editIngredient;
+        window.deleteIngredient = deleteIngredient;
+        window.openRecipeFromSearch = openRecipeFromSearch;
+        window.hideSearch = hideSearch;
+    </script>
+</body>
+</html>
